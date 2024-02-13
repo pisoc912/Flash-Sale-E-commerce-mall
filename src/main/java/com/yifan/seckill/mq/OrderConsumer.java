@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 
 @Slf4j
 @Component
@@ -32,7 +33,7 @@ public class OrderConsumer implements RocketMQListener<MessageExt> {
         String message = new String(messageExt.getBody(), StandardCharsets.UTF_8);
         log.info("Receive create order request: " + message);
         Order order = JSON.parseObject(message, Order.class);
-
+        order.setCreateTime(new Date());
         // 2.Reduce stock
         boolean lockStockResult =  seckillActivityDao.lockStock(order.getSeckillActivityId());
         if(lockStockResult){
